@@ -28,7 +28,9 @@
 
 package lang
 
-import "sync"
+import (
+	"sync"
+)
 
 type queuenode struct {
 	data interface{}
@@ -98,6 +100,19 @@ func (q *Queue) Poll() interface{} {
 	q.count--
 
 	return n.data
+}
+
+//	PollOrPeek returns the value at the front of the queue.
+//	i.e. the oldest value in the queue.
+//	Note: this function does mutate the queue,
+//  unless Len is equal to 1. In that case, Peek is called.
+//	go-routine safe.
+func (q *Queue) PollOrPeek() interface{} {
+	l := q.Len()
+	if l > 1 {
+		return q.Poll()
+	}
+	return q.Peek()
 }
 
 //	Returns a read value at the front of the queue.
